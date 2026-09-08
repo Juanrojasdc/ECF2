@@ -35,12 +35,19 @@ CREATE TABLE IF NOT EXISTS `absences` (
   `justification_path` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `trainee_id` int NOT NULL,
   PRIMARY KEY (`absence_id`),
-  KEY `trainee_id` (`trainee_id`)
+  KEY `trainee_id` (`trainee_id`),
+    CHECK (
+        reason IN (
+            'maladie',
+            'sans motif',
+            'absence légale',
+            'accident du travail'
+        )
+    )
 ) ;
 
 -- --------------------------------------------------------
 
---
 -- Estructura de tabla para la tabla `admins`
 --
 
