@@ -1,0 +1,12 @@
+.login-card {
+  width: 100%;
+  max-width: 26rem;
+}
+.trainee-photo {
+  height: 180px;
+  object-fit: cover;
+}
+
+.card {
+  overflow: hidden;
+}
