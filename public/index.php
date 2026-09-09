@@ -1,12 +1,18 @@
 <?php
+session_start();
 
 require_once __DIR__ . '/../app/Core/Database.php';
 require_once __DIR__ . '/../app/Core/Router.php';
+require_once __DIR__ . '/../app/Core/Csrf.php';
 require_once __DIR__ . '/../app/Models/TraineeModel.php';
 require_once __DIR__ . '/../app/Repositories/TraineeRepository.php';
 require_once __DIR__ . '/../app/Controllers/TraineeController.php';
+require_once __DIR__ . '/../app/Controllers/AuthController.php';
+require_once __DIR__ . '/../app/Models/AdminModel.php';
+require_once __DIR__ . '/../app/Repositories/AdminRepository.php';
 
 $config = require __DIR__ . '/../config/database.php';
+
 
 $database = new Database($config);
 $pdo = $database->getConnection();
@@ -14,12 +20,32 @@ $pdo = $database->getConnection();
 $traineeRepository = new TraineeRepository($pdo);
 $traineeController = new TraineeController($traineeRepository);
 
+$adminRepository = new AdminRepository($pdo);
+$authController = new AuthController($adminRepository);
+
 $router = new Router();
 
 $router->get('/trainees', function () use ($traineeController) {
+    if (!AuthController::isAuthenticated()) {
+        $_SESSION['flash_message'] =
+            'Vous devez vous connecter pour accéder à cette page.';
+
+        header('Location: login');
+        exit;
+    }
+
     $traineeController->index();
 });
 
+$router->get('/login', function () use ($authController) {
+    $authController->showLogin();
+});
+$router->post('/login', function () use ($authController) {
+    $authController->login();
+});
+$router->post('/logout', function () use ($authController) {
+    $authController->logout();
+});
 $requestPath = parse_url(
     $_SERVER['REQUEST_URI'],
     PHP_URL_PATH
