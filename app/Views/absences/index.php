@@ -164,20 +164,25 @@ foreach ($trainees as $trainee) {
                         <div class="col-6 col-sm-2 text-sm-end">
 
                             <?php if (
-                                $absence->getJustificationPath() !== null
-                            ): ?>
+        $absence->getJustificationPath() !== null
+    ): ?>
 
-                                <span class="small">
-                                    PDF
-                                </span>
+        <a
+            href="absences/justification?id=<?= $absence->getAbsenceId() ?>"
+            class="btn btn-sm btn-outline-secondary"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            PDF
+        </a>
 
-                            <?php else: ?>
+    <?php else: ?>
 
-                                <span class="small text-muted">
-                                    —
-                                </span>
+        <span class="small text-muted">
+            —
+        </span>
 
-                            <?php endif; ?>
+    <?php endif; ?>
 
                         </div>
 

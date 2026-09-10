@@ -176,4 +176,32 @@ public function countByReason(): array
     return $counts;
 }
 
+public function countSansMotifByTrainee(): array
+{
+    $sql = '
+        SELECT
+            trainee_id,
+            COUNT(*) AS total
+        FROM absences
+        WHERE reason = :reason
+        GROUP BY trainee_id
+    ';
+
+    $statement = $this->pdo->prepare($sql);
+
+    $statement->execute([
+        'reason' => 'sans motif'
+    ]);
+
+    $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+    $counts = [];
+
+    foreach ($rows as $row) {
+        $counts[(int) $row['trainee_id']] = (int) $row['total'];
+    }
+
+    return $counts;
+}
+
 }

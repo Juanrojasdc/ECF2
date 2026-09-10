@@ -112,6 +112,19 @@ public function showCreate(): void
         return;
     }
 
+    try {
+    $data['justification_path'] = PdfUploadService::upload(
+        $_FILES['justification'] ?? null
+    );
+} catch (RuntimeException $exception) {
+    $error = $exception->getMessage();
+
+    $trainees = $this->traineeRepository->findAll();
+
+    require __DIR__ . '/../Views/absences/create.php';
+    return;
+}
+
     $this->absenceRepository->create($data);
 
     $_SESSION['flash_message'] =
@@ -239,6 +252,23 @@ public function update(): void
         return;
     }
 
+    try {
+    $newJustificationPath = PdfUploadService::upload(
+        $_FILES['justification'] ?? null
+    );
+
+    if ($newJustificationPath !== null) {
+        $data['justification_path'] = $newJustificationPath;
+    }
+} catch (RuntimeException $exception) {
+    $error = $exception->getMessage();
+
+    $trainees = $this->traineeRepository->findAll();
+
+    require __DIR__ . '/../Views/absences/edit.php';
+    return;
+}
+
     $this->absenceRepository->update(
         $absenceId,
         $data
@@ -248,6 +278,56 @@ public function update(): void
         'L\'absence a été modifiée avec succès.';
 
     header('Location: ../absences');
+    exit;
+}
+
+/*
+|--------------------------------------------------------------------------
+| JUSTIFICATION PDF
+|--------------------------------------------------------------------------
+*/
+
+public function showJustification(): void
+{
+    $absenceId = (int) ($_GET['id'] ?? 0);
+
+    if ($absenceId <= 0) {
+        http_response_code(400);
+        echo '400 - Absence invalide';
+        return;
+    }
+
+    $absence = $this->absenceRepository->findById($absenceId);
+
+    if ($absence === null) {
+        http_response_code(404);
+        echo '404 - Absence introuvable';
+        return;
+    }
+
+    $justificationPath = $absence->getJustificationPath();
+
+    if ($justificationPath === null) {
+        http_response_code(404);
+        echo '404 - Justificatif introuvable';
+        return;
+    }
+
+    $filePath = __DIR__ . '/../../' . $justificationPath;
+
+    if (!is_file($filePath)) {
+        http_response_code(404);
+        echo '404 - Fichier introuvable';
+        return;
+    }
+
+    header('Content-Type: application/pdf');
+    header(
+        'Content-Disposition: inline; filename="justificatif.pdf"'
+    );
+    header('Content-Length: ' . filesize($filePath));
+
+    readfile($filePath);
     exit;
 }
 

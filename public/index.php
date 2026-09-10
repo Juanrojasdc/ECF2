@@ -20,8 +20,13 @@ require_once __DIR__ . '/../app/Controllers/AbsenceController.php';
 
 $config = require __DIR__ . '/../config/database.php';
 
+require_once __DIR__ . '/../app/Services/PdfUploadService.php';
+
 require_once __DIR__
     . '/../app/Services/PhotoUploadService.php';
+
+require_once __DIR__ . '/../app/Services/StatisticsService.php';
+require_once __DIR__ . '/../app/Controllers/StatisticsController.php';
 
 
 $database = new Database($config);
@@ -39,8 +44,28 @@ $absenceController = new AbsenceController(
     $traineeRepository
 );
 
+$statisticsService = new StatisticsService(
+    $absenceRepository
+);
+
+$statisticsController = new StatisticsController(
+    $statisticsService,
+    $traineeRepository
+);
+
 $router = new Router();
 
+
+
+/*
+|--------------------------------------------------------------------------
+| Statistics
+|--------------------------------------------------------------------------
+*/
+
+$router->get('/statistics', function () use ($statisticsController) {
+    $statisticsController->index();
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -178,6 +203,18 @@ $router->post('/absences/delete', function () use ($absenceController) {
 
     $absenceController->delete();
 });
+
+$router->get(
+    '/absences/justification',
+    function () use ($absenceController) {
+        if (!AuthController::isAuthenticated()) {
+            header('Location: ../login');
+            exit;
+        }
+
+        $absenceController->showJustification();
+    }
+);
 
 
 /*

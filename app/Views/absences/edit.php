@@ -71,9 +71,10 @@ $selectedReason = $_POST['reason']
 
 
                     <form
-                        method="POST"
-                        action="edit"
-                    >
+    method="POST"
+    action="edit"
+    enctype="multipart/form-data"
+>
 
                         <input
                             type="hidden"
@@ -224,33 +225,46 @@ $selectedReason = $_POST['reason']
 
 
                         <!-- Justificatif PDF -->
-                        <div class="border rounded p-3 mb-4 bg-light">
+<div class="mb-4">
 
-                            <div class="fw-semibold">
-                                Justificatif PDF
-                                <span class="fw-normal text-muted">
-                                    (optionnel)
-                                </span>
-                            </div>
+    <label
+        for="justification"
+        class="form-label"
+    >
+        Justificatif PDF
+        <span class="text-muted">
+            (optionnel)
+        </span>
+    </label>
 
-                            <?php if (
-                                $absence->getJustificationPath() !== null
-                            ): ?>
+    <?php if ($absence->getJustificationPath() !== null): ?>
 
-                                <div class="small text-muted">
-                                    Un justificatif est actuellement associé à cette absence.
-                                </div>
+        <div class="small text-muted mb-2">
+            Un justificatif est actuellement associé à cette absence.
+            Vous pouvez le remplacer en sélectionnant un nouveau fichier.
+        </div>
 
-                            <?php else: ?>
+    <?php else: ?>
 
-                                <div class="small text-muted">
-                                    Aucun justificatif associé.
-                                    Le dépôt de fichier sera disponible prochainement.
-                                </div>
+        <div class="small text-muted mb-2">
+            Aucun justificatif associé.
+        </div>
 
-                            <?php endif; ?>
+    <?php endif; ?>
 
-                        </div>
+    <input
+        type="file"
+        id="justification"
+        name="justification"
+        class="form-control"
+        accept="application/pdf,.pdf"
+    >
+
+    <div class="form-text">
+        Format PDF uniquement · 5 Mo maximum.
+    </div>
+
+</div>
 
 
                         <div class="d-flex flex-column flex-sm-row gap-2">

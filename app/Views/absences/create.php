@@ -50,10 +50,11 @@ require __DIR__ . '/../layouts/header.php';
                     </p>
 
 
-                    <form
-                        method="POST"
-                        action="create"
-                    >
+                  <form
+    method="POST"
+    action="create"
+    enctype="multipart/form-data"
+>
 
                         <input
                             type="hidden"
@@ -200,21 +201,32 @@ require __DIR__ . '/../layouts/header.php';
                         </div>
 
 
-                        <!-- Futur justificatif PDF -->
-                        <div class="border rounded p-3 mb-4 bg-light">
+                       <!-- Justificatif PDF -->
+<div class="mb-4">
 
-                            <div class="fw-semibold">
-                                Justificatif PDF
-                                <span class="fw-normal text-muted">
-                                    (optionnel)
-                                </span>
-                            </div>
+    <label
+        for="justification"
+        class="form-label"
+    >
+        Justificatif PDF
+        <span class="text-muted">
+            (optionnel)
+        </span>
+    </label>
 
-                            <div class="small text-muted">
-                                Le dépôt d'un justificatif sera disponible prochainement.
-                            </div>
+    <input
+        type="file"
+        id="justification"
+        name="justification"
+        class="form-control"
+        accept="application/pdf,.pdf"
+    >
 
-                        </div>
+    <div class="form-text">
+        Format PDF uniquement · 5 Mo maximum.
+    </div>
+
+</div>
 
 
                         <div class="d-flex flex-column flex-sm-row gap-2">
