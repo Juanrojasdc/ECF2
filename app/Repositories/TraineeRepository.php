@@ -3,6 +3,8 @@
 require_once __DIR__ . '/../Models/TraineeModel.php';
 class TraineeRepository
 {
+
+//me conecto a la base de datos usando database.php y PDO, lo que me permite ejecutar consultas SQL de manera segura y eficiente. PDO proporciona una capa de abstracción para interactuar con diferentes bases de datos, lo que facilita la portabilidad del código y mejora la seguridad al prevenir inyecciones SQL mediante el uso de declaraciones preparadas.
     private PDO $pdo;
 
     public function __construct(PDO $pdo)

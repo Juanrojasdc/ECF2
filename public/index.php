@@ -14,6 +14,10 @@ require_once __DIR__ . '/../app/Models/AdminModel.php';
 require_once __DIR__ . '/../app/Repositories/AdminRepository.php';
 require_once __DIR__ . '/../app/Controllers/AuthController.php';
 
+require_once __DIR__ . '/../app/Models/AbsenceModel.php';
+require_once __DIR__ . '/../app/Repositories/AbsenceRepository.php';
+require_once __DIR__ . '/../app/Controllers/AbsenceController.php';
+
 $config = require __DIR__ . '/../config/database.php';
 
 require_once __DIR__
@@ -28,6 +32,12 @@ $traineeController = new TraineeController($traineeRepository);
 
 $adminRepository = new AdminRepository($pdo);
 $authController = new AuthController($adminRepository);
+
+$absenceRepository = new AbsenceRepository($pdo);
+$absenceController = new AbsenceController(
+    $absenceRepository,
+    $traineeRepository
+);
 
 $router = new Router();
 
@@ -71,6 +81,26 @@ $router->post('/trainees/create', function () use ($traineeController) {
 });
 
 
+$router->get('/trainees/edit', function () use ($traineeController) {
+    if (!AuthController::isAuthenticated()) {
+        header('Location: ../login');
+        exit;
+    }
+
+    $traineeController->showEdit();
+});
+
+
+$router->post('/trainees/edit', function () use ($traineeController) {
+    if (!AuthController::isAuthenticated()) {
+        header('Location: ../login');
+        exit;
+    }
+
+    $traineeController->update();
+});
+
+
 $router->post('/trainees/delete', function () use ($traineeController) {
     if (!AuthController::isAuthenticated()) {
         header('Location: ../login');
@@ -78,6 +108,75 @@ $router->post('/trainees/delete', function () use ($traineeController) {
     }
 
     $traineeController->delete();
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| Absences
+|--------------------------------------------------------------------------
+*/
+
+$router->get('/absences', function () use ($absenceController) {
+    if (!AuthController::isAuthenticated()) {
+        $_SESSION['flash_message'] =
+            'Vous devez vous connecter pour accéder à cette page.';
+
+        header('Location: login');
+        exit;
+    }
+
+    $absenceController->index();
+});
+
+
+$router->get('/absences/create', function () use ($absenceController) {
+    if (!AuthController::isAuthenticated()) {
+        header('Location: ../login');
+        exit;
+    }
+
+    $absenceController->showCreate();
+});
+
+
+$router->post('/absences/create', function () use ($absenceController) {
+    if (!AuthController::isAuthenticated()) {
+        header('Location: ../login');
+        exit;
+    }
+
+    $absenceController->create();
+});
+
+
+$router->get('/absences/edit', function () use ($absenceController) {
+    if (!AuthController::isAuthenticated()) {
+        header('Location: ../login');
+        exit;
+    }
+
+    $absenceController->showEdit();
+});
+
+
+$router->post('/absences/edit', function () use ($absenceController) {
+    if (!AuthController::isAuthenticated()) {
+        header('Location: ../login');
+        exit;
+    }
+
+    $absenceController->update();
+});
+
+
+$router->post('/absences/delete', function () use ($absenceController) {
+    if (!AuthController::isAuthenticated()) {
+        header('Location: ../login');
+        exit;
+    }
+
+    $absenceController->delete();
 });
 
 
@@ -126,25 +225,6 @@ $path = substr(
 if ($path === '') {
     $path = '/';
 }
-
-$router->get('/trainees/edit', function () use ($traineeController) {
-    if (!AuthController::isAuthenticated()) {
-        header('Location: ../login');
-        exit;
-    }
-
-    $traineeController->showEdit();
-});
-
-
-$router->post('/trainees/edit', function () use ($traineeController) {
-    if (!AuthController::isAuthenticated()) {
-        header('Location: ../login');
-        exit;
-    }
-
-    $traineeController->update();
-});
 
 
 /*
