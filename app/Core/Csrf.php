@@ -13,11 +13,12 @@ class Csrf
         return $_SESSION['csrf_token'];
     }
 
-    public static function validate(?string $token): bool
+    public static function validate(mixed $token): bool
     {
         if (
-            $token === null ||
-            !isset($_SESSION['csrf_token'])
+            !is_string($token) ||
+            !isset($_SESSION['csrf_token']) ||
+            !is_string($_SESSION['csrf_token'])
         ) {
             return false;
         }

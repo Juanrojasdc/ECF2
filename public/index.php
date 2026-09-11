@@ -1,6 +1,23 @@
 <?php
 
 session_start();
+// ini set para configurar la visualización de errores y el registro de errores, set_exception_handler para manejar excepciones no capturadas y registrar los detalles del error en el registro de errores, y luego mostrar un mensaje genérico al usuario. Esto ayuda a mantener la seguridad y la estabilidad de la aplicación al evitar que los detalles del error se muestren directamente al usuario final.
+error_reporting(E_ALL);
+ini_set('display_errors', '0');
+ini_set('display_startup_errors', '0');
+ini_set('log_errors', '1');
+
+set_exception_handler(function (Throwable $exception): void {
+
+    error_log($exception->__toString());
+
+    if (!headers_sent()) {
+        http_response_code(500);
+        header('Content-Type: text/html; charset=UTF-8');
+    }
+
+    echo 'Une erreur interne est survenue. Veuillez réessayer.';
+});
 
 require_once __DIR__ . '/../app/Core/Database.php';
 require_once __DIR__ . '/../app/Core/Router.php';

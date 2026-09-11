@@ -21,6 +21,15 @@ class StatisticsController
         $trainees =
             $this->traineeRepository->findAll();
 
+        $isAdmin =
+            AuthController::isAuthenticated();
+
+        if (!$isAdmin) {
+            unset(
+                $statistics['sans_motif_by_trainee']
+            );
+        }
+
         require __DIR__ . '/../Views/statistics/index.php';
     }
 
@@ -31,6 +40,15 @@ class StatisticsController
 
         $trainees =
             $this->traineeRepository->findAll();
+
+        $isAdmin =
+            AuthController::isAuthenticated();
+
+        if (!$isAdmin) {
+            unset(
+                $statistics['sans_motif_by_trainee']
+            );
+        }
 
         require __DIR__ . '/../Views/statistics/offcanvas.php';
     }

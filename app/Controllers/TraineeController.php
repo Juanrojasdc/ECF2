@@ -38,29 +38,23 @@ class TraineeController
             return;
         }
 
-        $data = [
-            'afpa_id' => trim($_POST['afpa_id'] ?? ''),
-            'first_name' => trim($_POST['first_name'] ?? ''),
-            'last_name' => trim($_POST['last_name'] ?? ''),
-            'personal_email' => trim($_POST['personal_email'] ?? '') ?: null,
-            'phone' => trim($_POST['phone'] ?? '') ?: null,
-            'professional_url' => trim($_POST['professional_url'] ?? '') ?: null,
-            'professional_email' => trim($_POST['professional_email'] ?? '') ?: null,
-            'residence' => trim($_POST['residence'] ?? '') ?: null,
-            'birth_date' => ($_POST['birth_date'] ?? '') ?: null,
-            'photo_path' => null
-        ];
+        $data = $this->getTraineeData();
 
-        if (
-            $data['afpa_id'] === '' ||
-            $data['first_name'] === '' ||
-            $data['last_name'] === ''
-        ) {
-            $error = 'Veuillez remplir les champs obligatoires.';
+        if ($data === null) {
+            $error = 'Les données envoyées sont invalides.';
 
             require __DIR__ . '/../Views/trainees/create.php';
             return;
         }
+
+        $error = $this->validateTraineeData($data);
+
+        if ($error !== null) {
+            require __DIR__ . '/../Views/trainees/create.php';
+            return;
+        }
+
+        $data['photo_path'] = null;
 
         try {
             $data['photo_path'] = PhotoUploadService::upload(
@@ -102,9 +96,9 @@ class TraineeController
 
     public function showEdit(): void
     {
-        $traineeId = (int) ($_GET['id'] ?? 0);
+        $traineeId = $this->getPositiveInt($_GET['id'] ?? null);
 
-        if ($traineeId <= 0) {
+        if ($traineeId === null) {
             http_response_code(400);
             echo '400 - Stagiaire invalide';
             return;
@@ -131,9 +125,11 @@ class TraineeController
             return;
         }
 
-        $traineeId = (int) ($_POST['trainee_id'] ?? 0);
+        $traineeId = $this->getPositiveInt(
+            $_POST['trainee_id'] ?? null
+        );
 
-        if ($traineeId <= 0) {
+        if ($traineeId === null) {
             http_response_code(400);
             echo '400 - Stagiaire invalide';
             return;
@@ -151,41 +147,25 @@ class TraineeController
             return;
         }
 
-        $data = [
-            'afpa_id' => trim($_POST['afpa_id'] ?? ''),
-            'first_name' => trim($_POST['first_name'] ?? ''),
-            'last_name' => trim($_POST['last_name'] ?? ''),
-            'personal_email' => trim($_POST['personal_email'] ?? '') ?: null,
-            'phone' => trim($_POST['phone'] ?? '') ?: null,
-            'professional_url' => trim($_POST['professional_url'] ?? '') ?: null,
-            'professional_email' => trim($_POST['professional_email'] ?? '') ?: null,
-            'residence' => trim($_POST['residence'] ?? '') ?: null,
-            'birth_date' => ($_POST['birth_date'] ?? '') ?: null,
+        $data = $this->getTraineeData();
 
-            // Por defecto conservamos la foto actual.
-            'photo_path' => $trainee->getPhotoPath()
-        ];
-
-        if (
-            $data['afpa_id'] === '' ||
-            $data['first_name'] === '' ||
-            $data['last_name'] === ''
-        ) {
-            $error = 'Veuillez remplir les champs obligatoires.';
+        if ($data === null) {
+            $error = 'Les données envoyées sont invalides.';
 
             require __DIR__ . '/../Views/trainees/edit.php';
             return;
         }
 
-        /*
-         * Si se ha seleccionado una nueva foto:
-         * se valida, se guarda físicamente y obtenemos su nueva ruta.
-         *
-         * Si no se seleccionó ninguna:
-         * PhotoUploadService devuelve null y conservamos la anterior.
-         */
+        $error = $this->validateTraineeData($data);
 
-        
+        if ($error !== null) {
+            require __DIR__ . '/../Views/trainees/edit.php';
+            return;
+        }
+
+        // Conservamos la foto actual por defecto.
+        $data['photo_path'] = $trainee->getPhotoPath();
+
         try {
             $newPhotoPath = PhotoUploadService::upload(
                 $_FILES['photo'] ?? null
@@ -231,42 +211,244 @@ class TraineeController
     |--------------------------------------------------------------------------
     */
 
-public function delete(): void
-{
-    if (!Csrf::validate($_POST['csrf_token'] ?? null)) {
-        http_response_code(403);
-        echo '403 - Requête non autorisée';
-        return;
-    }
-
-    $traineeId = (int) ($_POST['trainee_id'] ?? 0);
-
-    if ($traineeId <= 0) {
-        http_response_code(400);
-        echo '400 - Stagiaire invalide';
-        return;
-    }
-
-    try {
-        $this->traineeRepository->delete($traineeId);
-    } catch (PDOException $exception) {
-
-        if ($exception->getCode() === '23000') {
-
-            $_SESSION['flash_message'] =
-                'Impossible de supprimer ce stagiaire car des absences lui sont associées.';
-
-            header('Location: ../trainees');
-            exit;
+    public function delete(): void
+    {
+        if (!Csrf::validate($_POST['csrf_token'] ?? null)) {
+            http_response_code(403);
+            echo '403 - Requête non autorisée';
+            return;
         }
 
-        throw $exception;
+        $traineeId = $this->getPositiveInt(
+            $_POST['trainee_id'] ?? null
+        );
+
+        if ($traineeId === null) {
+            http_response_code(400);
+            echo '400 - Stagiaire invalide';
+            return;
+        }
+
+        $trainee = $this->traineeRepository->findById($traineeId);
+
+        if ($trainee === null) {
+            http_response_code(404);
+            echo '404 - Stagiaire introuvable';
+            return;
+        }
+
+        try {
+            $this->traineeRepository->delete($traineeId);
+        } catch (PDOException $exception) {
+            if ($exception->getCode() === '23000') {
+                $_SESSION['flash_message'] =
+                    'Impossible de supprimer ce stagiaire car des absences lui sont associées.';
+
+                header('Location: ../trainees');
+                exit;
+            }
+
+            throw $exception;
+        }
+
+        $_SESSION['flash_message'] =
+            'Le stagiaire a été supprimé avec succès.';
+
+        header('Location: ../trainees');
+        exit;
     }
 
-    $_SESSION['flash_message'] =
-        'Le stagiaire a été supprimé avec succès.';
 
-    header('Location: ../trainees');
-    exit;
-}
+    /*
+    |--------------------------------------------------------------------------
+    | VALIDATION
+    |--------------------------------------------------------------------------
+    */
+
+    private function getTraineeData(): ?array
+    {
+        $fields = [
+            'afpa_id',
+            'first_name',
+            'last_name',
+            'personal_email',
+            'phone',
+            'professional_url',
+            'professional_email',
+            'residence',
+            'birth_date'
+        ];
+
+        $values = [];
+
+        foreach ($fields as $field) {
+            $value = $_POST[$field] ?? '';
+
+            if (!is_string($value)) {
+                return null;
+            }
+
+            $values[$field] = trim($value);
+        }
+
+        return [
+            'afpa_id' => $values['afpa_id'],
+            'first_name' => $values['first_name'],
+            'last_name' => $values['last_name'],
+            'personal_email' =>
+                $values['personal_email'] !== ''
+                    ? $values['personal_email']
+                    : null,
+            'phone' =>
+                $values['phone'] !== ''
+                    ? $values['phone']
+                    : null,
+            'professional_url' =>
+                $values['professional_url'] !== ''
+                    ? $values['professional_url']
+                    : null,
+            'professional_email' =>
+                $values['professional_email'] !== ''
+                    ? $values['professional_email']
+                    : null,
+            'residence' =>
+                $values['residence'] !== ''
+                    ? $values['residence']
+                    : null,
+            'birth_date' =>
+                $values['birth_date'] !== ''
+                    ? $values['birth_date']
+                    : null
+        ];
+    }
+
+    private function validateTraineeData(array $data): ?string
+    {
+        if (
+            $data['afpa_id'] === '' ||
+            $data['first_name'] === '' ||
+            $data['last_name'] === ''
+        ) {
+            return 'Veuillez remplir les champs obligatoires.';
+        }
+
+        if (strlen($data['afpa_id']) > 20) {
+            return 'L’identifiant AFPA ne doit pas dépasser 20 caractères.';
+        }
+
+        if (
+            strlen($data['first_name']) > 100 ||
+            strlen($data['last_name']) > 100
+        ) {
+            return 'Le prénom et le nom sont trop longs.';
+        }
+
+        if (
+            $data['personal_email'] !== null &&
+            !filter_var(
+                $data['personal_email'],
+                FILTER_VALIDATE_EMAIL
+            )
+        ) {
+            return 'L’adresse e-mail personnelle est invalide.';
+        }
+
+        if (
+            $data['professional_email'] !== null &&
+            !filter_var(
+                $data['professional_email'],
+                FILTER_VALIDATE_EMAIL
+            )
+        ) {
+            return 'L’adresse e-mail professionnelle est invalide.';
+        }
+
+        if (
+            $data['personal_email'] !== null &&
+            strlen($data['personal_email']) > 255
+        ) {
+            return 'L’adresse e-mail personnelle est trop longue.';
+        }
+
+        if (
+            $data['professional_email'] !== null &&
+            strlen($data['professional_email']) > 255
+        ) {
+            return 'L’adresse e-mail professionnelle est trop longue.';
+        }
+
+        if (
+            $data['phone'] !== null &&
+            strlen($data['phone']) > 30
+        ) {
+            return 'Le numéro de téléphone est trop long.';
+        }
+
+        if ($data['professional_url'] !== null) {
+            if (
+                strlen($data['professional_url']) > 255 ||
+                !filter_var(
+                    $data['professional_url'],
+                    FILTER_VALIDATE_URL
+                )
+            ) {
+                return 'L’URL professionnelle est invalide.';
+            }
+
+            $scheme = parse_url(
+                $data['professional_url'],
+                PHP_URL_SCHEME
+            );
+
+            if (!in_array($scheme, ['http', 'https'], true)) {
+                return 'L’URL professionnelle doit utiliser HTTP ou HTTPS.';
+            }
+        }
+
+        if (
+            $data['residence'] !== null &&
+            strlen($data['residence']) > 255
+        ) {
+            return 'Le lieu de résidence est trop long.';
+        }
+
+        if ($data['birth_date'] !== null) {
+            $date = DateTime::createFromFormat(
+                'Y-m-d',
+                $data['birth_date']
+            );
+
+            if (
+                $date === false ||
+                $date->format('Y-m-d') !== $data['birth_date']
+            ) {
+                return 'La date de naissance est invalide.';
+            }
+        }
+
+        return null;
+    }
+
+    private function getPositiveInt(mixed $value): ?int
+    {
+        if (!is_string($value) && !is_int($value)) {
+            return null;
+        }
+
+        $validatedValue = filter_var(
+            $value,
+            FILTER_VALIDATE_INT,
+            [
+                'options' => [
+                    'min_range' => 1
+                ]
+            ]
+        );
+
+        if ($validatedValue === false) {
+            return null;
+        }
+
+        return $validatedValue;
+    }
 }

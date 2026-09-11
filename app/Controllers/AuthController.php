@@ -10,9 +10,9 @@ class AuthController
     }
 
     public static function isAuthenticated(): bool
-{
-    return isset($_SESSION['admin_id']);
-}
+    {
+        return isset($_SESSION['admin_id']);
+    }
 
     public function showLogin(): void
     {
@@ -23,8 +23,19 @@ class AuthController
 
     public function login(): void
     {
-        $login = trim($_POST['login'] ?? '');
-        $password = $_POST['password'] ?? '';
+        $login = $_POST['login'] ?? null;
+        $password = $_POST['password'] ?? null;
+
+        if (
+            !is_string($login) ||
+            !is_string($password)
+        ) {
+            $error = 'Les données envoyées sont invalides.';
+            require __DIR__ . '/../Views/auth/login.php';
+            return;
+        }
+
+        $login = trim($login);
 
         if ($login === '' || $password === '') {
             $error = 'Veuillez remplir tous les champs.';
@@ -36,7 +47,10 @@ class AuthController
 
         if (
             $admin === null ||
-            !password_verify($password, $admin->getPasswordHash())
+            !password_verify(
+                $password,
+                $admin->getPasswordHash()
+            )
         ) {
             $error = 'Identifiant ou mot de passe incorrect.';
             require __DIR__ . '/../Views/auth/login.php';
@@ -52,22 +66,22 @@ class AuthController
         exit;
     }
 
-  public function logout(): void
-{
-    if (!Csrf::validate($_POST['csrf_token'] ?? null)) {
-        http_response_code(403);
-        echo '403 - Requête non autorisée';
-        return;
+    public function logout(): void
+    {
+        if (!Csrf::validate($_POST['csrf_token'] ?? null)) {
+            http_response_code(403);
+            echo '403 - Requête non autorisée';
+            return;
+        }
+
+        $_SESSION = [];
+
+        session_regenerate_id(true);
+
+        $_SESSION['flash_message'] =
+            'Vous avez été déconnecté avec succès.';
+
+        header('Location: login');
+        exit;
     }
-
-    $_SESSION = [];
-
-    session_regenerate_id(true);
-
-    $_SESSION['flash_message'] =
-        'Vous avez été déconnecté avec succès.';
-
-    header('Location: login');
-    exit;
-}
 }
