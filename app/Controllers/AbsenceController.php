@@ -35,6 +35,9 @@ public function showCreate(): void
     $trainees = $this->traineeRepository->findAll();
     $error = null;
 
+    $selectedTraineeId =
+        (int) ($_GET['trainee_id'] ?? 0);
+
     require __DIR__ . '/../Views/absences/create.php';
 }
 

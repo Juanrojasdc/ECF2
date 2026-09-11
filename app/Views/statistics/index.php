@@ -8,10 +8,20 @@ require __DIR__ . '/../layouts/header.php';
 $totalAbsences = $statistics['total_absences'] ?? 0;
 $byReason = $statistics['by_reason'] ?? [];
 
+$absencesByTrainee =
+    $statistics['absences_by_trainee'] ?? [];
+
+$dailyIncome =
+    $statistics['daily_income'] ?? 0;
+
+$estimatedTotalLoss =
+    $statistics['estimated_total_loss'] ?? 0;
+
 $sansMotifByTrainee =
     $statistics['sans_motif_by_trainee'] ?? [];
 
 $traineesById = [];
+
 
 foreach ($trainees as $trainee) {
     $traineesById[$trainee->getTraineeId()] = $trainee;
@@ -80,6 +90,107 @@ foreach ($trainees as $trainee) {
         </div>
 
     </div>
+
+
+    <div class="card shadow-sm mt-4">
+
+    <div class="card-body">
+
+        <h2 class="h5 mb-3">
+            Classement des stagiaires
+        </h2>
+
+        <?php if (empty($absencesByTrainee)): ?>
+
+            <p class="text-muted mb-0">
+                Aucune absence enregistrée.
+            </p>
+
+        <?php else: ?>
+
+            <?php foreach ($absencesByTrainee as $traineeId => $total): ?>
+
+                <?php
+                $trainee =
+                    $traineesById[$traineeId] ?? null;
+                ?>
+
+                <div class="d-flex justify-content-between border-bottom py-2">
+
+                    <span>
+                        <?php if ($trainee !== null): ?>
+
+                            <?= htmlspecialchars(
+                                $trainee->getFirstName()
+                                . ' '
+                                . $trainee->getLastName(),
+                                ENT_QUOTES,
+                                'UTF-8'
+                            ) ?>
+
+                        <?php else: ?>
+
+                            Stagiaire introuvable
+
+                        <?php endif; ?>
+                    </span>
+
+                    <strong>
+                        <?= $total ?>
+                    </strong>
+
+                </div>
+
+            <?php endforeach; ?>
+
+        <?php endif; ?>
+
+    </div>
+
+</div>
+
+<div class="card shadow-sm mt-4">
+
+    <div class="card-body">
+
+        <h2 class="h5 mb-3">
+            Perte de revenu estimée
+        </h2>
+
+        <p class="small text-muted mb-2">
+            Base de calcul :
+            712 € / mois · 21 jours ouvrés
+        </p>
+
+        <p class="mb-2">
+            Revenu journalier théorique :
+            <strong>
+                <?= number_format(
+                    $dailyIncome,
+                    2,
+                    ',',
+                    ' '
+                ) ?>
+                €
+            </strong>
+        </p>
+
+        <p class="mb-0">
+            Perte cumulée estimée :
+            <strong>
+                <?= number_format(
+                    $estimatedTotalLoss,
+                    2,
+                    ',',
+                    ' '
+                ) ?>
+                €
+            </strong>
+        </p>
+
+    </div>
+
+</div>
 
     <div class="card shadow-sm mt-4">
 

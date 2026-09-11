@@ -23,4 +23,15 @@ class StatisticsController
 
         require __DIR__ . '/../Views/statistics/index.php';
     }
+
+    public function offcanvas(): void
+    {
+        $statistics =
+            $this->statisticsService->getStatistics();
+
+        $trainees =
+            $this->traineeRepository->findAll();
+
+        require __DIR__ . '/../Views/statistics/offcanvas.php';
+    }
 }

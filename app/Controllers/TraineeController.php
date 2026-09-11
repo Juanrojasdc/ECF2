@@ -231,28 +231,42 @@ class TraineeController
     |--------------------------------------------------------------------------
     */
 
-    public function delete(): void
-    {
-        if (!Csrf::validate($_POST['csrf_token'] ?? null)) {
-            http_response_code(403);
-            echo '403 - Requête non autorisée';
-            return;
-        }
-
-        $traineeId = (int) ($_POST['trainee_id'] ?? 0);
-
-        if ($traineeId <= 0) {
-            http_response_code(400);
-            echo '400 - Stagiaire invalide';
-            return;
-        }
-
-        $this->traineeRepository->delete($traineeId);
-
-        $_SESSION['flash_message'] =
-            'Le stagiaire a été supprimé avec succès.';
-
-        header('Location: ../trainees');
-        exit;
+public function delete(): void
+{
+    if (!Csrf::validate($_POST['csrf_token'] ?? null)) {
+        http_response_code(403);
+        echo '403 - Requête non autorisée';
+        return;
     }
+
+    $traineeId = (int) ($_POST['trainee_id'] ?? 0);
+
+    if ($traineeId <= 0) {
+        http_response_code(400);
+        echo '400 - Stagiaire invalide';
+        return;
+    }
+
+    try {
+        $this->traineeRepository->delete($traineeId);
+    } catch (PDOException $exception) {
+
+        if ($exception->getCode() === '23000') {
+
+            $_SESSION['flash_message'] =
+                'Impossible de supprimer ce stagiaire car des absences lui sont associées.';
+
+            header('Location: ../trainees');
+            exit;
+        }
+
+        throw $exception;
+    }
+
+    $_SESSION['flash_message'] =
+        'Le stagiaire a été supprimé avec succès.';
+
+    header('Location: ../trainees');
+    exit;
+}
 }

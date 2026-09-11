@@ -1,54 +1,157 @@
 <?php
+
 $pageTitle = 'Connexion administrateur';
+$error = $error ?? null;
+
+$baseUrl = rtrim(
+    dirname($_SERVER['SCRIPT_NAME']),
+    '/'
+);
+
 require __DIR__ . '/../layouts/head.php';
 
 $flashMessage = $_SESSION['flash_message'] ?? null;
 unset($_SESSION['flash_message']);
 ?>
+
 <main class="container flex-grow-1 d-flex align-items-center justify-content-center py-4">
-<section class="card login-card shadow-sm" aria-labelledby="login-title">
-<div class="card-body p-4">
-<?php if ($flashMessage !== null): ?>
-    <div class="alert alert-info" role="status">
-        <?= htmlspecialchars($flashMessage, ENT_QUOTES, 'UTF-8') ?>
-    </div>
-<?php endif; ?>
-    <h1 id="login-title" class="h4 mb-4">Connexion administrateur</h1>
 
-    <?php if ($error !== null): ?>
-        <div class="alert alert-danger" role="alert">
-            <?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?>
-        </div>
-    <?php endif; ?>
+    <section
+        class="card login-card shadow-sm"
+        aria-labelledby="login-title"
+    >
 
-    <form method="POST" action="login">
-        <div class="mb-3">
-            <label class="form-label" for="login">Identifiant</label>
-            <input
-                class="form-control"
-                autocomplete="username"
-                type="text"
-                id="login"
-                name="login"
-                required
+        <div class="card-body p-4">
+
+            <?php if ($flashMessage !== null): ?>
+
+                <div
+                    class="alert alert-info"
+                    role="status"
+                >
+                    <?= htmlspecialchars(
+                        $flashMessage,
+                        ENT_QUOTES,
+                        'UTF-8'
+                    ) ?>
+                </div>
+
+            <?php endif; ?>
+
+
+            <h1
+                id="login-title"
+                class="h4 mb-4"
             >
-        </div>
+                Connexion administrateur
+            </h1>
 
-        <div class="mb-4">
-            <label class="form-label" for="password">Mot de passe</label>
-            <input
-                class="form-control"
-                autocomplete="current-password"
-                type="password"
-                id="password"
-                name="password"
-                required
+
+            <?php if ($error !== null): ?>
+
+                <div
+                    class="alert alert-danger"
+                    role="alert"
+                >
+                    <?= htmlspecialchars(
+                        $error,
+                        ENT_QUOTES,
+                        'UTF-8'
+                    ) ?>
+                </div>
+
+            <?php endif; ?>
+
+
+            <form
+                method="POST"
+                action="<?= htmlspecialchars(
+                    $baseUrl . '/login',
+                    ENT_QUOTES,
+                    'UTF-8'
+                ) ?>"
             >
+
+                <div class="mb-3">
+
+                    <label
+                        class="form-label"
+                        for="login"
+                    >
+                        Identifiant
+                    </label>
+
+                    <input
+                        class="form-control"
+                        autocomplete="username"
+                        type="text"
+                        id="login"
+                        name="login"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="mb-4">
+
+                    <label
+                        class="form-label"
+                        for="password"
+                    >
+                        Mot de passe
+                    </label>
+
+                    <input
+                        class="form-control"
+                        autocomplete="current-password"
+                        type="password"
+                        id="password"
+                        name="password"
+                        required
+                    >
+
+                </div>
+
+
+                <button
+                    class="btn btn-primary w-100"
+                    type="submit"
+                >
+                    Se connecter
+                </button>
+
+            </form>
+
+
+            <hr class="my-4">
+
+
+            <div class="text-center">
+
+                <p class="small text-muted mb-2">
+                    Les statistiques sont accessibles sans connexion.
+                </p>
+
+                <a
+                    href="<?= htmlspecialchars(
+                        $baseUrl . '/statistics',
+                        ENT_QUOTES,
+                        'UTF-8'
+                    ) ?>"
+                    class="btn btn-outline-secondary w-100"
+                >
+                    Voir les statistiques
+                </a>
+
+            </div>
+
         </div>
 
-        <button class="btn btn-primary w-100" type="submit">Se connecter</button>
-    </form>
-</div>
-</section>
+    </section>
+
 </main>
-<?php require __DIR__ . '/../layouts/footer.php'; ?>
+
+<?php
+require __DIR__ . '/../layouts/footer.php';
+?>

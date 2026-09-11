@@ -3,8 +3,19 @@
 $pageTitle = 'Ajouter une absence';
 $error = $error ?? null;
 
+$baseUrl = rtrim(
+    dirname($_SERVER['SCRIPT_NAME']),
+    '/'
+);
+
+$selectedTraineeId = (int) (
+    $_POST['trainee_id']
+    ?? ($selectedTraineeId ?? 0)
+);
+
 require __DIR__ . '/../layouts/head.php';
 require __DIR__ . '/../layouts/header.php';
+
 ?>
 
 <main class="container py-4">
@@ -13,7 +24,9 @@ require __DIR__ . '/../layouts/header.php';
 
         <div class="col-12 col-md-9 col-lg-7">
 
+
             <div class="mb-4">
+
                 <h1 class="h3 mb-1">
                     Ajouter une absence
                 </h1>
@@ -21,17 +34,20 @@ require __DIR__ . '/../layouts/header.php';
                 <p class="text-muted mb-0">
                     Une absence correspond à une journée complète.
                 </p>
+
             </div>
 
 
             <?php if ($error !== null): ?>
 
                 <div class="alert alert-danger">
+
                     <?= htmlspecialchars(
                         $error,
                         ENT_QUOTES,
                         'UTF-8'
                     ) ?>
+
                 </div>
 
             <?php endif; ?>
@@ -41,20 +57,27 @@ require __DIR__ . '/../layouts/header.php';
 
                 <div class="card-body p-4">
 
+
                     <h2 class="h5 mb-1">
                         Ajouter une absence
                     </h2>
+
 
                     <p class="small text-muted mb-4">
                         Renseignez les informations de la journée d'absence.
                     </p>
 
 
-                  <form
-    method="POST"
-    action="create"
-    enctype="multipart/form-data"
->
+                    <form
+                        method="POST"
+                        action="<?= htmlspecialchars(
+                            $baseUrl . '/absences/create',
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?>"
+                        enctype="multipart/form-data"
+                    >
+
 
                         <input
                             type="hidden"
@@ -68,6 +91,7 @@ require __DIR__ . '/../layouts/header.php';
 
 
                         <!-- Stagiaire -->
+
                         <div class="mb-3">
 
                             <label
@@ -76,6 +100,7 @@ require __DIR__ . '/../layouts/header.php';
                             >
                                 Stagiaire
                             </label>
+
 
                             <select
                                 id="trainee_id"
@@ -88,14 +113,16 @@ require __DIR__ . '/../layouts/header.php';
                                     Sélectionner un stagiaire
                                 </option>
 
+
                                 <?php foreach ($trainees as $trainee): ?>
 
                                     <option
                                         value="<?= $trainee->getTraineeId() ?>"
-                                        <?= (int) ($_POST['trainee_id'] ?? 0) === $trainee->getTraineeId()
+                                        <?= $trainee->getTraineeId() === $selectedTraineeId
                                             ? 'selected'
                                             : '' ?>
                                     >
+
                                         <?= htmlspecialchars(
                                             $trainee->getFirstName()
                                             . ' '
@@ -103,6 +130,7 @@ require __DIR__ . '/../layouts/header.php';
                                             ENT_QUOTES,
                                             'UTF-8'
                                         ) ?>
+
                                     </option>
 
                                 <?php endforeach; ?>
@@ -114,7 +142,9 @@ require __DIR__ . '/../layouts/header.php';
 
                         <div class="row">
 
+
                             <!-- Date -->
+
                             <div class="col-12 col-md-6 mb-3">
 
                                 <label
@@ -123,6 +153,7 @@ require __DIR__ . '/../layouts/header.php';
                                 >
                                     Date
                                 </label>
+
 
                                 <input
                                     type="date"
@@ -141,6 +172,7 @@ require __DIR__ . '/../layouts/header.php';
 
 
                             <!-- Motif -->
+
                             <div class="col-12 col-md-6 mb-3">
 
                                 <label
@@ -149,6 +181,7 @@ require __DIR__ . '/../layouts/header.php';
                                 >
                                     Motif
                                 </label>
+
 
                                 <select
                                     id="reason"
@@ -161,7 +194,9 @@ require __DIR__ . '/../layouts/header.php';
                                         Sélectionner un motif
                                     </option>
 
+
                                     <?php
+
                                     $reasons = [
                                         'maladie',
                                         'sans motif',
@@ -171,7 +206,9 @@ require __DIR__ . '/../layouts/header.php';
 
                                     $selectedReason =
                                         $_POST['reason'] ?? '';
+
                                     ?>
+
 
                                     <?php foreach ($reasons as $reason): ?>
 
@@ -185,11 +222,13 @@ require __DIR__ . '/../layouts/header.php';
                                                 ? 'selected'
                                                 : '' ?>
                                         >
+
                                             <?= htmlspecialchars(
                                                 $reason,
                                                 ENT_QUOTES,
                                                 'UTF-8'
                                             ) ?>
+
                                         </option>
 
                                     <?php endforeach; ?>
@@ -201,42 +240,53 @@ require __DIR__ . '/../layouts/header.php';
                         </div>
 
 
-                       <!-- Justificatif PDF -->
-<div class="mb-4">
+                        <!-- Justificatif PDF -->
 
-    <label
-        for="justification"
-        class="form-label"
-    >
-        Justificatif PDF
-        <span class="text-muted">
-            (optionnel)
-        </span>
-    </label>
+                        <div class="mb-4">
 
-    <input
-        type="file"
-        id="justification"
-        name="justification"
-        class="form-control"
-        accept="application/pdf,.pdf"
-    >
+                            <label
+                                for="justification"
+                                class="form-label"
+                            >
 
-    <div class="form-text">
-        Format PDF uniquement · 5 Mo maximum.
-    </div>
+                                Justificatif PDF
 
-</div>
+                                <span class="text-muted">
+                                    (optionnel)
+                                </span>
+
+                            </label>
+
+
+                            <input
+                                type="file"
+                                id="justification"
+                                name="justification"
+                                class="form-control"
+                                accept="application/pdf,.pdf"
+                            >
+
+
+                            <div class="form-text">
+                                Format PDF uniquement · 5 Mo maximum.
+                            </div>
+
+                        </div>
 
 
                         <div class="d-flex flex-column flex-sm-row gap-2">
 
                             <a
-                                href="../absences"
+                                href="<?= htmlspecialchars(
+                                    $baseUrl . '/absences',
+                                    ENT_QUOTES,
+                                    'UTF-8'
+                                ) ?>"
                                 class="btn btn-outline-secondary flex-sm-fill"
                             >
                                 Annuler
                             </a>
+
 
                             <button
                                 type="submit"

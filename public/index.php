@@ -67,6 +67,29 @@ $router->get('/statistics', function () use ($statisticsController) {
     $statisticsController->index();
 });
 
+$router->get('/statistics/offcanvas', function () use ($statisticsController) {
+    $statisticsController->offcanvas();
+});
+
+
+
+/*
+|--------------------------------------------------------------------------
+| Home
+|--------------------------------------------------------------------------
+*/
+
+$router->get('/', function () {
+    if (AuthController::isAuthenticated()) {
+        header('Location: trainees');
+        exit;
+    }
+
+    header('Location: login');
+    exit;
+});
+
+
 /*
 |--------------------------------------------------------------------------
 | Trainees

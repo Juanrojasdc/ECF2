@@ -204,4 +204,28 @@ public function countSansMotifByTrainee(): array
     return $counts;
 }
 
+public function countByTrainee(): array
+{
+    $sql = '
+        SELECT
+            trainee_id,
+            COUNT(*) AS total
+        FROM absences
+        GROUP BY trainee_id
+        ORDER BY total DESC
+    ';
+
+    $statement = $this->pdo->query($sql);
+    $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+    $counts = [];
+
+    foreach ($rows as $row) {
+        $counts[(int) $row['trainee_id']] =
+            (int) $row['total'];
+    }
+
+    return $counts;
+}
+
 }
