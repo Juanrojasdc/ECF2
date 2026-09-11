@@ -23,6 +23,7 @@ class Csrf
             return false;
         }
 
+        // Compare tokens without leaking their matching prefix
         return hash_equals(
             $_SESSION['csrf_token'],
             $token

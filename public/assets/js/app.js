@@ -1,9 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  /*
-  |--------------------------------------------------------------------------
-  | Mode gestion
-  |--------------------------------------------------------------------------
-  */
+  // Toggle management controls; authorization remains server-side
 
   const managementModeButton = document.getElementById("managementModeButton");
 
@@ -35,11 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  /*
-  |--------------------------------------------------------------------------
-  | Statistics offcanvas
-  |--------------------------------------------------------------------------
-  */
+  // Load fresh statistics when the panel opens
 
   const statisticsOffcanvas = document.getElementById("statisticsOffcanvas");
 

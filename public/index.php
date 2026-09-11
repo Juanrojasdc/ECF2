@@ -1,7 +1,7 @@
 <?php
 
 session_start();
-// ini set para configurar la visualización de errores y el registro de errores, set_exception_handler para manejar excepciones no capturadas y registrar los detalles del error en el registro de errores, y luego mostrar un mensaje genérico al usuario. Esto ayuda a mantener la seguridad y la estabilidad de la aplicación al evitar que los detalles del error se muestren directamente al usuario final.
+// Log technical details and show a generic error to the user.
 error_reporting(E_ALL);
 ini_set('display_errors', '0');
 ini_set('display_startup_errors', '0');
@@ -46,6 +46,7 @@ require_once __DIR__ . '/../app/Services/StatisticsService.php';
 require_once __DIR__ . '/../app/Controllers/StatisticsController.php';
 
 
+// Wire repositories, services and controllers
 $database = new Database($config);
 $pdo = $database->getConnection();
 
@@ -74,11 +75,7 @@ $router = new Router();
 
 
 
-/*
-|--------------------------------------------------------------------------
-| Statistics
-|--------------------------------------------------------------------------
-*/
+// Public statistics routes
 
 $router->get('/statistics', function () use ($statisticsController) {
     $statisticsController->index();
@@ -90,11 +87,7 @@ $router->get('/statistics/offcanvas', function () use ($statisticsController) {
 
 
 
-/*
-|--------------------------------------------------------------------------
-| Home
-|--------------------------------------------------------------------------
-*/
+// Home redirect
 
 $router->get('/', function () {
     if (AuthController::isAuthenticated()) {
@@ -107,11 +100,7 @@ $router->get('/', function () {
 });
 
 
-/*
-|--------------------------------------------------------------------------
-| Trainees
-|--------------------------------------------------------------------------
-*/
+// Protected trainee routes
 
 $router->get('/trainees', function () use ($traineeController) {
     if (!AuthController::isAuthenticated()) {
@@ -176,11 +165,7 @@ $router->post('/trainees/delete', function () use ($traineeController) {
 });
 
 
-/*
-|--------------------------------------------------------------------------
-| Absences
-|--------------------------------------------------------------------------
-*/
+// Protected absence routes
 
 $router->get('/absences', function () use ($absenceController) {
     if (!AuthController::isAuthenticated()) {
@@ -257,11 +242,7 @@ $router->get(
 );
 
 
-/*
-|--------------------------------------------------------------------------
-| Authentication
-|--------------------------------------------------------------------------
-*/
+// Login and logout routes
 
 $router->get('/login', function () use ($authController) {
     $authController->showLogin();
@@ -278,11 +259,7 @@ $router->post('/logout', function () use ($authController) {
 });
 
 
-/*
-|--------------------------------------------------------------------------
-| Request path
-|--------------------------------------------------------------------------
-*/
+// Remove the application directory before matching routes
 
 $requestPath = parse_url(
     $_SERVER['REQUEST_URI'],
@@ -304,11 +281,7 @@ if ($path === '') {
 }
 
 
-/*
-|--------------------------------------------------------------------------
-| Dispatch
-|--------------------------------------------------------------------------
-*/
+// Dispatch the request
 
 $router->dispatch(
     $_SERVER['REQUEST_METHOD'],

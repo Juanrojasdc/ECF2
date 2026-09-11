@@ -17,11 +17,7 @@ class TraineeController
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | CREATE
-    |--------------------------------------------------------------------------
-    */
+    // Creation
 
     public function showCreate(): void
     {
@@ -38,6 +34,7 @@ class TraineeController
             return;
         }
 
+        // Validate submitted trainee details
         $data = $this->getTraineeData();
 
         if ($data === null) {
@@ -54,6 +51,7 @@ class TraineeController
             return;
         }
 
+        // Optional photo upload
         $data['photo_path'] = null;
 
         try {
@@ -88,11 +86,7 @@ class TraineeController
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | UPDATE
-    |--------------------------------------------------------------------------
-    */
+    // Editing
 
     public function showEdit(): void
     {
@@ -135,10 +129,7 @@ class TraineeController
             return;
         }
 
-        /*
-         * Recuperamos el trainee actual porque necesitamos
-         * conservar su foto si el administrador no sube una nueva.
-         */
+        // Load the current trainee before applying changes.
         $trainee = $this->traineeRepository->findById($traineeId);
 
         if ($trainee === null) {
@@ -163,7 +154,7 @@ class TraineeController
             return;
         }
 
-        // Conservamos la foto actual por defecto.
+        // Keep the current photo unless a replacement is uploaded.
         $data['photo_path'] = $trainee->getPhotoPath();
 
         try {
@@ -205,11 +196,7 @@ class TraineeController
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | DELETE
-    |--------------------------------------------------------------------------
-    */
+    // Deletion
 
     public function delete(): void
     {
@@ -237,6 +224,7 @@ class TraineeController
             return;
         }
 
+        // Linked absences prevent deletion through the foreign key
         try {
             $this->traineeRepository->delete($traineeId);
         } catch (PDOException $exception) {
@@ -259,11 +247,7 @@ class TraineeController
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | VALIDATION
-    |--------------------------------------------------------------------------
-    */
+    // Input validation
 
     private function getTraineeData(): ?array
     {

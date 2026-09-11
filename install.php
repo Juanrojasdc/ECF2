@@ -18,6 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $config = require $configPath;
 
+        // Validate installation inputs
         $requiredKeys = [
             'host',
             'port',
@@ -33,6 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
+        // Restrict identifiers used in database creation
         $databaseName = $config['database'];
         $charset = $config['charset'];
 
@@ -50,6 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             throw new RuntimeException('Invalid charset.');
         }
 
+        // Connect to MySQL before selecting the application database
         $serverDsn = sprintf(
             'mysql:host=%s;port=%s;charset=%s',
             $config['host'],
@@ -78,6 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $pdo->exec(sprintf('USE `%s`', $databaseName));
 
+        // Import the local SQL dump
         $sql = file_get_contents($sqlPath);
 
         if ($sql === false || trim($sql) === '') {

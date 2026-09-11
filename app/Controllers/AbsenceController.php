@@ -22,11 +22,7 @@ class AbsenceController
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | CREATE
-    |--------------------------------------------------------------------------
-    */
+    // Creation
 
     public function showCreate(): void
     {
@@ -90,6 +86,7 @@ class AbsenceController
             return;
         }
 
+        // Allowed full-day absence reasons
         $allowedReasons = [
             'maladie',
             'sans motif',
@@ -125,6 +122,7 @@ class AbsenceController
             return;
         }
 
+        // Optional supporting PDF
         try {
             $data['justification_path'] =
                 PdfUploadService::upload(
@@ -148,11 +146,7 @@ class AbsenceController
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | UPDATE
-    |--------------------------------------------------------------------------
-    */
+    // Editing
 
     public function showEdit(): void
     {
@@ -288,6 +282,7 @@ class AbsenceController
             return;
         }
 
+        // Keep the existing PDF when no replacement is uploaded
         try {
             $newJustificationPath =
                 PdfUploadService::upload(
@@ -319,11 +314,7 @@ class AbsenceController
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | JUSTIFICATION PDF
-    |--------------------------------------------------------------------------
-    */
+    // Protected PDF delivery
 
     public function showJustification(): void
     {
@@ -347,6 +338,7 @@ class AbsenceController
             return;
         }
 
+        // Resolve the document from the absence, not a client-supplied path
         $justificationPath =
             $absence->getJustificationPath();
 
@@ -380,11 +372,7 @@ class AbsenceController
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | DELETE
-    |--------------------------------------------------------------------------
-    */
+    // Deletion
 
     public function delete(): void
     {
@@ -424,11 +412,7 @@ class AbsenceController
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | VALIDATION
-    |--------------------------------------------------------------------------
-    */
+    // Input validation
 
     private function getPositiveInt(mixed $value): ?int
     {
@@ -476,6 +460,7 @@ class AbsenceController
             return false;
         }
 
+        // Match the MySQL DATE year range
         $year = (int) $date->format('Y');
 
         return $year >= 1000 && $year <= 9999;

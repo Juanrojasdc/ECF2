@@ -6,13 +6,7 @@ $error = $error ?? null;
 require __DIR__ . '/../layouts/head.php';
 require __DIR__ . '/../layouts/header.php';
 
-/*
- * Conservamos los datos introducidos por el usuario
- * si el formulario vuelve después de un error.
- *
- * Si no hay POST, utilizamos los datos actuales
- * de la ausencia recuperada desde la base de datos.
- */
+// Prefer submitted values when redisplaying a failed form.
 $selectedTraineeId = (int) (
     $_POST['trainee_id']
     ?? $absence->getTraineeId()
@@ -93,7 +87,7 @@ $selectedReason = $_POST['reason']
                         >
 
 
-                        <!-- Stagiaire -->
+                        <!-- Trainee -->
                         <div class="mb-3">
 
                             <label
@@ -166,7 +160,7 @@ $selectedReason = $_POST['reason']
                             </div>
 
 
-                            <!-- Motif -->
+                            <!-- Reason -->
                             <div class="col-12 col-md-6 mb-3">
 
                                 <label
@@ -224,7 +218,7 @@ $selectedReason = $_POST['reason']
                         </div>
 
 
-                        <!-- Justificatif PDF -->
+                        <!-- Supporting PDF -->
 <div class="mb-4">
 
     <label

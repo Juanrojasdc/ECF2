@@ -90,7 +90,7 @@ require __DIR__ . '/../layouts/header.php';
                         >
 
 
-                        <!-- Stagiaire -->
+                        <!-- Trainee -->
 
                         <div class="mb-3">
 
@@ -171,7 +171,7 @@ require __DIR__ . '/../layouts/header.php';
                             </div>
 
 
-                            <!-- Motif -->
+                            <!-- Reason -->
 
                             <div class="col-12 col-md-6 mb-3">
 
@@ -240,7 +240,7 @@ require __DIR__ . '/../layouts/header.php';
                         </div>
 
 
-                        <!-- Justificatif PDF -->
+                        <!-- Supporting PDF -->
 
                         <div class="mb-4">
 

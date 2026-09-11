@@ -140,6 +140,7 @@ class AbsenceRepository
         ]);
     }
 
+    // Statistics aggregates
     public function countAll(): int
 {
     $sql = '

@@ -34,6 +34,7 @@ class StatisticsService
             'accident du travail'
         ];
 
+        // Include reasons with no recorded absences
         $reasonStatistics = [];
 
         foreach ($reasons as $reason) {
@@ -41,6 +42,7 @@ class StatisticsService
                 $countsByReason[$reason] ?? 0;
         }
 
+        // Each record counts as one full day at the ECF rate of 712 / 21
         $dailyIncome =
             self::MONTHLY_INCOME / self::WORKING_DAYS;
 

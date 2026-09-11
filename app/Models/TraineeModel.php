@@ -17,9 +17,9 @@ class Trainee
     ) {
     }
 
-//Los atributos de la clase Trainee son privados y se acceden a través de métodos públicos (getters) para mantener el principio de encapsulación y proteger la integridad de los datos. Esto permite controlar cómo se accede y modifica la información del objeto, evitando cambios no deseados desde fuera de la clase.
 
-//Los atributos con tipo de dato nullable (por ejemplo, ?string) permiten que esos campos puedan ser nulos, lo que es útil para representar información opcional o desconocida. Esto proporciona flexibilidad al manejar datos incompletos o ausentes sin causar errores en la aplicación.
+
+
 
     public function getTraineeId(): int
     {

@@ -3,7 +3,7 @@
 class Router
 {
     private array $routes = [];
-// en los parametros esta string para decir que es una cadena de texto y callable para decir que es una funcion que se puede llamar, en este caso el handler es la funcion que se va a ejecutar cuando se haga una peticion a la ruta especificada.
+
     public function get(string $path, callable $handler): void
     {
         $this->addRoute('GET', $path, $handler);

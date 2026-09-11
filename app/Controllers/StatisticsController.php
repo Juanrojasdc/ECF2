@@ -24,6 +24,7 @@ class StatisticsController
         $isAdmin =
             AuthController::isAuthenticated();
 
+        // Keep individual absence alerts out of public statistics
         if (!$isAdmin) {
             unset(
                 $statistics['sans_motif_by_trainee']

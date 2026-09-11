@@ -57,6 +57,7 @@ class AuthController
             return;
         }
 
+        // Replace the pre-login session ID before granting admin access
         session_regenerate_id(true);
 
         $_SESSION['admin_id'] = $admin->getAdminId();
@@ -74,6 +75,7 @@ class AuthController
             return;
         }
 
+        // Clear admin state while keeping a fresh session for the logout message
         $_SESSION = [];
 
         session_regenerate_id(true);

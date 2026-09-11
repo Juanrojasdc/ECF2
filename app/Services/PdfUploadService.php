@@ -29,6 +29,7 @@ class PdfUploadService
             );
         }
 
+        // Check file content rather than the client-provided extension
         $finfo = new finfo(FILEINFO_MIME_TYPE);
         $mimeType = $finfo->file($file['tmp_name']);
 
@@ -38,6 +39,7 @@ class PdfUploadService
             );
         }
 
+        // Generate the storage name and extension on the server
         $extension = self::ALLOWED_MIME_TYPES[$mimeType];
 
         $fileName = bin2hex(random_bytes(16))

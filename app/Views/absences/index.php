@@ -9,13 +9,7 @@ $flashMessage = $_SESSION['flash_message'] ?? null;
 
 unset($_SESSION['flash_message']);
 
-/*
- * Mapa de stagiaires:
- * trainee_id => objet Trainee
- *
- * Esto nos permite recuperar rápidamente el nombre
- * correspondiente a cada ausencia.
- */
+// Index trainees by ID to display names alongside absences.
 $traineesById = [];
 
 foreach ($trainees as $trainee) {
@@ -138,7 +132,7 @@ foreach ($trainees as $trainee) {
                         </div>
 
 
-                        <!-- Stagiaire + motif -->
+                        <!-- Trainee and reason -->
                         <div class="col-12 col-sm-5 col-lg-6">
 
                             <div class="fw-semibold">
@@ -160,7 +154,7 @@ foreach ($trainees as $trainee) {
                         </div>
 
 
-                        <!-- Justificatif -->
+                        <!-- Supporting PDF -->
                         <div class="col-6 col-sm-2 text-sm-end">
 
                             <?php if (

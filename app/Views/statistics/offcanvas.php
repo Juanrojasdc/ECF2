@@ -39,7 +39,7 @@ foreach ($trainees as $trainee) {
 </div>
 
 
-<!-- Répartition -->
+<!-- Breakdown by reason -->
 <div class="mb-4">
 
     <h3 class="h6 mb-3">
@@ -69,7 +69,7 @@ foreach ($trainees as $trainee) {
 </div>
 
 
-<!-- Classement -->
+<!-- Trainee ranking -->
 <div class="mb-4">
 
     <h3 class="h6 mb-3">
@@ -126,7 +126,7 @@ foreach ($trainees as $trainee) {
 </div>
 
 
-<!-- Perte de revenu -->
+<!-- Estimated income loss -->
 <div class="mb-4">
 
     <h3 class="h6 mb-3">
@@ -180,7 +180,7 @@ foreach ($trainees as $trainee) {
 
     <hr>
 
-    <!-- Alerte -->
+    <!-- Admin-only alerts -->
     <div>
 
         <h3 class="h6 mb-2">

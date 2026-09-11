@@ -82,7 +82,7 @@ $isAuthenticated = AuthController::isAuthenticated();
                     <?php endif; ?>
 
 
-                    <!-- Statistics: toujours public -->
+                    <!-- Public statistics navigation -->
                     <li class="nav-item">
 
                         <button
