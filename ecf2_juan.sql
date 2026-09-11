@@ -41,7 +41,7 @@ CREATE TABLE `absences` (
 
 LOCK TABLES `absences` WRITE;
 /*!40000 ALTER TABLE `absences` DISABLE KEYS */;
-INSERT INTO `absences` VALUES (3,'2026-09-09','sans motif',NULL,4),(5,'2026-09-07','sans motif',NULL,4),(6,'2026-09-03','sans motif',NULL,4),(7,'2026-09-02','sans motif',NULL,4),(8,'2026-09-02','sans motif',NULL,4),(9,'2026-09-10','sans motif','storage/uploads/justifications/6b89f91fc08f75e76950acf4e6c99ffa.pdf',4),(10,'2026-09-10','accident du travail','storage/uploads/justifications/fd50439e8ab145e60d296c97717d732e.pdf',3),(11,'2026-09-11','maladie',NULL,7);
+INSERT INTO `absences` VALUES (3,'2026-09-09','sans motif',NULL,4),(5,'2026-09-07','sans motif',NULL,4),(6,'2026-09-03','sans motif',NULL,4),(7,'2026-09-02','sans motif',NULL,4),(8,'2026-09-02','sans motif',NULL,4),(11,'2026-09-11','maladie',NULL,7);
 /*!40000 ALTER TABLE `absences` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -114,4 +114,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-09-11 13:09:12
+-- Dump completed on 2026-09-11 16:57:38
