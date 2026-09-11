@@ -1,4 +1,12 @@
+# Environment configuration
 .env
+
+# Logs
 *.log
-storage/
-uploads/
+
+# Runtime uploaded files
+storage/uploads/justifications/*
+
+# OS / editor files
+.DS_Store
+Thumbs.db
